@@ -1,33 +1,75 @@
 const audio = document.getElementById('main-audio');
 const playBtn = document.getElementById('play-btn');
 const lyrics = document.querySelectorAll('.lyric-line');
+const progress = document.getElementById('progress');
+const art = document.getElementById('rotating-art');
 
+// Fullscreen + Play Toggle
 playBtn.onclick = () => {
-    audio.paused ? (audio.play(), playBtn.innerText = "Pause") : (audio.pause(), playBtn.innerText = "Play");
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+    }
+
+    if (audio.paused) {
+        audio.play();
+        playBtn.innerText = "II";
+        art.classList.add('playing');
+    } else {
+        audio.pause();
+        playBtn.innerText = "▶";
+        art.classList.remove('playing');
+    }
 };
 
-// Syncing "No One Noticed" - Adjust these timestamps to your song file!
+// Syncing Logic
 audio.ontimeupdate = () => {
     const t = audio.currentTime;
-    if (t > 0)  update(0);
-    if (t > 5)  update(1);
-    if (t > 10) update(2);
-    if (t > 15) update(3);
-    if (t > 20) update(4);
-    if (t > 25) update(5);
+    
+    // Update Progress Bar
+    const percent = (t / audio.duration) * 100;
+    progress.style.width = `${percent}%`;
+
+    // Sync Lyrics
+    lyrics.forEach((line, index) => {
+        const lineTime = parseFloat(line.getAttribute('data-time'));
+        const nextLineTime = lyrics[index + 1] ? parseFloat(lyrics[index + 1].getAttribute('data-time')) : 999;
+
+        if (t >= lineTime && t < nextLineTime) {
+            if (!line.classList.contains('active')) {
+                lyrics.forEach(l => l.classList.remove('active'));
+                line.classList.add('active');
+                line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    });
 };
 
-function update(index) {
-    lyrics.forEach((l, i) => l.classList.toggle('active', i === index));
-}
-
+// Particle Burst Effect
 document.onclick = (e) => {
-    const img = document.createElement('img');
-    img.src = 'heart.jpg';
-    img.className = 'heart-pop';
-    img.style.width = '40px';
-    img.style.left = e.clientX - 20 + 'px';
-    img.style.top = e.clientY - 20 + 'px';
-    document.body.appendChild(img);
-    setTimeout(() => img.remove(), 1000);
+    // Create 5 hearts per click for a "burst" feel
+    for (let i = 0; i < 5; i++) {
+        createParticle(e.clientX, e.clientY);
+    }
 };
+
+function createParticle(x, y) {
+    const p = document.createElement('img');
+    p.src = 'heart.jpg';
+    p.className = 'particle';
+    
+    // Random direction and rotation
+    const tx = (Math.random() - 0.5) * 300 + 'px';
+    const ty = (Math.random() - 0.5) * 300 + 'px';
+    const tr = Math.random() * 360 + 'deg';
+    
+    p.style.setProperty('--tx', tx);
+    p.style.setProperty('--ty', ty);
+    p.style.setProperty('--tr', tr);
+    
+    p.style.left = x + 'px';
+    p.style.top = y + 'px';
+    p.style.width = '30px';
+    
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 1200);
+}
