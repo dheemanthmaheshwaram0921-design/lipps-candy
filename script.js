@@ -1,39 +1,55 @@
-        if (t >= lineTime && t < nextLineTime) {
-            if (!line.classList.contains('active')) {
-                lyrics.forEach(l => l.classList.remove('active'));
-                line.classList.add('active');
-                line.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        }
-    });
-};
+const audio = document.getElementById('main-audio');
+const playBtn = document.getElementById('play-btn');
+const lyrics = document.querySelectorAll('.lyric-line');
+const progress = document.getElementById('progress');
 
-// Particle Burst Effect
-document.onclick = (e) => {
-    // Create 5 hearts per click for a "burst" feel
-    for (let i = 0; i < 5; i++) {
-        createParticle(e.clientX, e.clientY);
+// First line active immediately
+window.onload = () => { update(0); };
+
+playBtn.onclick = () => {
+    if (audio.paused) {
+        audio.play();
+        playBtn.innerText = "II";
+    } else {
+        audio.pause();
+        playBtn.innerText = "▶";
     }
 };
 
-function createParticle(x, y) {
-    const p = document.createElement('img');
-    p.src = 'heart.jpg';
-    p.className = 'particle';
-    
-    // Random direction and rotation
-    const tx = (Math.random() - 0.5) * 300 + 'px';
-    const ty = (Math.random() - 0.5) * 300 + 'px';
-    const tr = Math.random() * 360 + 'deg';
-    
-    p.style.setProperty('--tx', tx);
-    p.style.setProperty('--ty', ty);
-    p.style.setProperty('--tr', tr);
-    
-    p.style.left = x + 'px';
-    p.style.top = y + 'px';
-    p.style.width = '30px';
-    
-    document.body.appendChild(p);
-    setTimeout(() => p.remove(), 1200);
+audio.ontimeupdate = () => {
+    const t = audio.currentTime;
+    progress.style.width = `${(t / audio.duration) * 100}%`;
+
+    let currentIndex = 0;
+    lyrics.forEach((line, index) => {
+        if (t >= parseFloat(line.getAttribute('data-time'))) {
+            currentIndex = index;
+        }
+    });
+    update(currentIndex);
+};
+
+function update(index) {
+    lyrics.forEach((line, i) => {
+        line.classList.toggle('active', i === index);
+        if (i === index) {
+            line.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    });
 }
+
+document.onclick = (e) => {
+    for (let i = 0; i < 4; i++) {
+        const p = document.createElement('img');
+        p.src = 'heart.jpg';
+        p.className = 'particle';
+        p.style.setProperty('--tx', (Math.random() - 0.5) * 200 + 'px');
+        p.style.setProperty('--ty', (Math.random() - 0.5) * 200 + 'px');
+        p.style.setProperty('--tr', Math.random() * 360 + 'deg');
+        p.style.left = e.clientX + 'px';
+        p.style.top = e.clientY + 'px';
+        p.style.width = '25px';
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 1000);
+    }
+};
