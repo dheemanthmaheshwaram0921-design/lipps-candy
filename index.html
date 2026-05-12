@@ -2,32 +2,48 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>For You</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>No One Noticed</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="gradient-bg"></div>
-    <div class="container">
-        <div class="lyrics-container" id="lyrics-box">
-            <p class="lyric-line active">I'm not used to this...</p>
-            <p class="lyric-line">All this love and all this bliss.</p>
-            <p class="lyric-line">I've been hiding in the shadows,</p>
-            <p class="lyric-line">Hoping no one noticed this.</p>
-            <p class="lyric-line">But you did...</p>
-            <p class="lyric-line">Yeah, you really did.</p>
+    <div class="canvas-container">
+        <div class="gradient-bg"></div>
+    </div>
+
+    <div class="main-wrapper">
+        <div class="lyrics-wrapper" id="lyrics-box">
+            <p class="lyric-line" data-time="0">I'm not used to this</p>
+            <p class="lyric-line" data-time="4.5">All this love and all this bliss</p>
+            <p class="lyric-line" data-time="9.0">I've been hiding in the shadows</p>
+            <p class="lyric-line" data-time="13.5">Hoping no one noticed this</p>
+            <p class="lyric-line" data-time="18.0">But you did</p>
+            <p class="lyric-line" data-time="21.0">Yeah, you really did</p>
+            <p class="lyric-line" data-time="26.0">I'm not used to being known</p>
+            <p class="lyric-line" data-time="31.0">I've been living on my own</p>
+            <p class="lyric-line" data-time="35.5">Now I'm standing in the light</p>
+            <p class="lyric-line" data-time="40.0">And everything is feeling right</p>
+            <p class="lyric-line" data-time="45.0">Because of you...</p>
         </div>
 
-        <div class="player-card">
-            <div class="album-art"><img src="heart.jpg" alt="Art"></div>
-            <div class="track-info">
-                <h2>No One Noticed</h2>
-                <p>The Marías</p>
+        <div class="glass-player">
+            <div class="player-content">
+                <div class="album-art-container">
+                    <img src="heart.jpg" alt="Art" id="rotating-art">
+                </div>
+                <div class="song-meta">
+                    <h2 class="song-title">No One Noticed</h2>
+                    <p class="artist-name">The Marías</p>
+                </div>
+                <audio id="main-audio" src="song.mp3"></audio>
+                <button id="play-btn" class="play-trigger">▶</button>
             </div>
-            <audio id="main-audio" src="song.mp3"></audio>
-            <button id="play-btn">▶ Play</button>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress"></div>
+            </div>
         </div>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
