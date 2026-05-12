@@ -8,58 +8,67 @@ body, html {
     overflow: hidden; position: fixed;
 }
 
+#intro-screen {
+    position: fixed; top: 0; left: 0;
+    width: 100vw; height: 100vh; background: #000;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000; transition: opacity 1s ease;
+}
+
+.intro-content { text-align: center; }
+.profile-pop {
+    width: 120px; height: 120px; border-radius: 50%;
+    border: 3px solid #fff; animation: imagePop 0.8s cubic-bezier(0.17, 0.89, 0.32, 1.49);
+}
+
+.for-you-text {
+    font-size: 2.5rem; font-weight: 900; margin-top: 20px;
+    letter-spacing: 5px; animation: textPop 1s ease forwards;
+}
+
+.username { font-size: 1.1rem; opacity: 0.7; margin-top: 10px; }
+
+@keyframes imagePop { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+@keyframes textPop { 0% { transform: translateY(20px); opacity: 0; } 100% { transform: translateY(0); opacity: 1; } }
+.hide-intro { opacity: 0; pointer-events: none; }
+
+#click-handler { position: fixed; top: 0; left: 0; width: 100%; height: 80%; z-index: 5; }
+
 .gradient-bg {
-    position: fixed; width: 200vw; height: 200vh;
-    top: -50vh; left: -50vw;
-    background: radial-gradient(circle at 50% 50%, #1a1a1a, #000, #2c001e);
-    z-index: -1; opacity: 0.8;
+    position: fixed; width: 100vw; height: 100vh;
+    background: radial-gradient(circle at 50% 50%, #1a1a1a, #000); z-index: -1;
 }
 
 .main-wrapper {
     height: 100dvh; display: flex; flex-direction: column;
-    padding: 15px; justify-content: space-between;
+    padding: 20px; justify-content: space-between; position: relative; z-index: 10;
 }
 
 .lyrics-wrapper {
-    flex: 1; display: flex; flex-direction: column;
-    justify-content: center; overflow-y: auto;
-    scrollbar-width: none;
-    mask-image: linear-gradient(transparent, black 20%, black 80%, transparent);
-    -webkit-mask-image: linear-gradient(transparent, black 20%, black 80%, transparent);
+    flex: 1; display: flex; flex-direction: column; justify-content: center; 
+    overflow-y: auto; scrollbar-width: none;
+    mask-image: linear-gradient(transparent, black 25%, black 75%, transparent);
+    -webkit-mask-image: linear-gradient(transparent, black 25%, black 75%, transparent);
 }
 
 .lyric-line {
-    font-size: 1.6rem; /* Decreased zoom */
-    font-weight: 700;
-    margin: 15px 0;
-    opacity: 0.15; /* Transparent but NO BLUR */
-    transition: all 0.4s ease;
-    transform: scale(0.95);
+    font-size: 1.5rem; font-weight: 700; margin: 15px 0;
+    opacity: 0.15; transition: all 0.5s ease;
 }
 
-.lyric-line.active {
-    opacity: 1;
-    transform: scale(1); /* Smooth subtle focus */
-    color: #fff;
-}
+.lyric-line.active { opacity: 1; transform: scale(1.05); }
 
 .glass-player {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 20px; padding: 15px;
-    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px);
+    border-radius: 20px; padding: 15px; border: 1px solid rgba(255,255,255,0.1);
 }
 
 .player-content { display: flex; align-items: center; gap: 12px; }
 .album-art-container img { width: 50px; height: 50px; border-radius: 8px; }
 
-.song-meta h2 { margin: 0; font-size: 1rem; }
-.song-meta p { margin: 0; font-size: 0.8rem; opacity: 0.6; }
-
 .play-trigger {
-    background: #fff; border: none; width: 40px; height: 40px;
-    border-radius: 50%; font-size: 1rem; cursor: pointer;
+    background: #fff; border: none; width: 45px; height: 45px;
+    border-radius: 50%; font-size: 1.2rem; cursor: pointer; color: #000;
 }
 
 .progress-bar-container {
@@ -68,8 +77,12 @@ body, html {
 }
 .progress-bar { width: 0%; height: 100%; background: #fff; }
 
-.particle { position: absolute; pointer-events: none; animation: pop 1s ease-out forwards; }
-@keyframes pop {
+.particle {
+    position: absolute; pointer-events: none; z-index: 100;
+    animation: popOut 1s ease-out forwards;
+}
+
+@keyframes popOut {
     0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
     100% { transform: translate(var(--tx), var(--ty)) scale(1) rotate(var(--tr)); opacity: 0; }
 }
