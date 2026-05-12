@@ -2,14 +2,29 @@ const audio = document.getElementById('main-audio');
 const playBtn = document.getElementById('play-btn');
 const lyrics = document.querySelectorAll('.lyric-line');
 const progress = document.getElementById('progress');
+const clickArea = document.getElementById('click-handler');
 
-// First line active immediately
-window.onload = () => { update(0); };
+window.onload = () => {
+    update(0); 
+    
+    // Initial heart burst for Lipps Candy
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    for(let i=0; i<15; i++) {
+        createParticle(centerX, centerY);
+    }
 
-playBtn.onclick = () => {
+    setTimeout(() => {
+        document.getElementById('intro-screen').classList.add('hide-intro');
+    }, 3500);
+};
+
+playBtn.onclick = (e) => {
+    e.stopPropagation();
     if (audio.paused) {
-        audio.play();
-        playBtn.innerText = "II";
+        audio.play().then(() => {
+            playBtn.innerText = "II";
+        }).catch(err => console.log("Playback blocked"));
     } else {
         audio.pause();
         playBtn.innerText = "▶";
@@ -20,36 +35,41 @@ audio.ontimeupdate = () => {
     const t = audio.currentTime;
     progress.style.width = `${(t / audio.duration) * 100}%`;
 
-    let currentIndex = 0;
+    let activeIndex = -1;
     lyrics.forEach((line, index) => {
-        if (t >= parseFloat(line.getAttribute('data-time'))) {
-            currentIndex = index;
-        }
+        const lineTime = parseFloat(line.getAttribute('data-time'));
+        if (t >= lineTime) activeIndex = index;
     });
-    update(currentIndex);
+
+    if (activeIndex !== -1) update(activeIndex);
 };
 
 function update(index) {
     lyrics.forEach((line, i) => {
-        line.classList.toggle('active', i === index);
-        if (i === index) {
+        const isActive = i === index;
+        line.classList.toggle('active', isActive);
+        if (isActive && !line.dataset.scrolled) {
             line.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     });
 }
 
-document.onclick = (e) => {
-    for (let i = 0; i < 4; i++) {
-        const p = document.createElement('img');
-        p.src = 'heart.jpg';
-        p.className = 'particle';
-        p.style.setProperty('--tx', (Math.random() - 0.5) * 200 + 'px');
-        p.style.setProperty('--ty', (Math.random() - 0.5) * 200 + 'px');
-        p.style.setProperty('--tr', Math.random() * 360 + 'deg');
-        p.style.left = e.clientX + 'px';
-        p.style.top = e.clientY + 'px';
-        p.style.width = '25px';
-        document.body.appendChild(p);
-        setTimeout(() => p.remove(), 1000);
+function createParticle(x, y) {
+    const p = document.createElement('img');
+    p.src = 'heart.jpg';
+    p.className = 'particle';
+    p.style.setProperty('--tx', (Math.random() - 0.5) * 400 + 'px');
+    p.style.setProperty('--ty', (Math.random() - 0.5) * 400 + 'px');
+    p.style.setProperty('--tr', Math.random() * 360 + 'deg');
+    p.style.left = x + 'px';
+    p.style.top = y + 'px';
+    p.style.width = '35px';
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), 1000);
+}
+
+clickArea.onclick = (e) => {
+    for (let i = 0; i < 6; i++) {
+        createParticle(e.clientX, e.clientY);
     }
 };
